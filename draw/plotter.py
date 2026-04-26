@@ -2,10 +2,11 @@ from __future__ import annotations
 
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
+from typing import Sequence
 
 from config import DEFAULT_PLOT_CONFIG, FontSizePolicy, LayoutMode, PlotConfig, normalize_layout_mode
 
-from .strategies import ChartType, DrawStrategy, STRATEGY_BY_CHART_TYPE
+from .strategies import GRID_STRATEGY, LINE_STRATEGY, GridDrawStrategy, LineDrawStrategy
 
 
 class MatplotlibDrawer:
@@ -22,8 +23,11 @@ class MatplotlibDrawer:
         self.policy = policy
         self.dpi = dpi
 
-    def _get_strategy(self, chart_type: ChartType) -> DrawStrategy:
-        return STRATEGY_BY_CHART_TYPE[chart_type]
+    def _get_line_strategy(self) -> LineDrawStrategy:
+        return LINE_STRATEGY
+
+    def _get_grid_strategy(self) -> GridDrawStrategy:
+        return GRID_STRATEGY
 
     def draw_line(
         self,
@@ -38,12 +42,12 @@ class MatplotlibDrawer:
     ) -> tuple[Figure, Axes]:
         """Draw a line chart from a CSV source file."""
         mode = normalize_layout_mode(layout_mode)
-        strategy = self._get_strategy(ChartType.LINE)
-        fig, ax = strategy.draw(
+        strategy = self._get_line_strategy()
+        fig, ax = strategy.draw_line(
             config=self.config,
             layout_mode=mode,
-            policy=self.policy,
             source_file=source_file,
+            policy=self.policy,
             title=title,
             xlabel=xlabel,
             ylabel=ylabel,
@@ -55,7 +59,7 @@ class MatplotlibDrawer:
 
     def draw_grid(
         self,
-        source_files: list[str],
+        source_files: Sequence[str],
         *,
         layout_mode: LayoutMode | str = LayoutMode.TWO_PER_ROW,
         figure_title: str | None = None,
@@ -65,12 +69,12 @@ class MatplotlibDrawer:
     ) -> tuple[Figure, list[Axes]]:
         """Draw a grid chart from CSV source files."""
         mode = normalize_layout_mode(layout_mode)
-        strategy = self._get_strategy(ChartType.GRID)
-        fig, axes = strategy.draw(
+        strategy = self._get_grid_strategy()
+        fig, axes = strategy.draw_grid(
             config=self.config,
             layout_mode=mode,
-            policy=self.policy,
             source_files=source_files,
+            policy=self.policy,
             figure_title=figure_title,
             xlabel=xlabel,
             ylabel=ylabel,
@@ -106,7 +110,7 @@ def draw_line_chart(
 
 
 def draw_grid_chart(
-    source_files: list[str],
+    source_files: Sequence[str],
     *,
     layout_mode: LayoutMode | str = LayoutMode.TWO_PER_ROW,
     figure_title: str | None = None,

@@ -11,34 +11,28 @@ from matplotlib.figure import Figure
 
 from config import FontSizePolicy, LayoutMode, PlotConfig, get_color_palette, get_plot_font_size_pt
 
-from .base import DrawStrategy
+from .base import LineDrawStrategy
 
 _MM_PER_INCH = 25.4
 
 
-class LineChartStrategy(DrawStrategy):
+class LineChartStrategy(LineDrawStrategy):
     """Strategy for drawing a single line chart from a CSV file."""
 
-    def draw(
+    def draw_line(
         self,
         *,
         config: PlotConfig,
         layout_mode: LayoutMode,
+        source_file: str,
         policy: FontSizePolicy | None = None,
-        source_file: str | None = None,
-        source_files: Sequence[str] | None = None,
         title: str | None = None,
         xlabel: str | None = None,
         ylabel: str | None = None,
         label: str | None = None,
-        figure_title: str | None = None,
         save_path: str | None = None,
         dpi: int = 300,
     ) -> tuple[Figure, Axes]:
-        if source_file is None:
-            raise ValueError("source_file is required for line charts.")
-        _ = source_files
-        _ = figure_title
         mode = layout_mode
         self._apply_style(config, mode, policy)
         path = self.validate_source_file(source_file)
@@ -63,6 +57,40 @@ class LineChartStrategy(DrawStrategy):
         )
         fig.savefig(output_path, dpi=dpi, bbox_inches="tight")
         return fig, ax
+
+    # Backward-compatible entrypoint for older internal calls.
+    def draw(
+        self,
+        *,
+        config: PlotConfig,
+        layout_mode: LayoutMode,
+        policy: FontSizePolicy | None = None,
+        source_file: str | None = None,
+        source_files: Sequence[str] | None = None,
+        title: str | None = None,
+        xlabel: str | None = None,
+        ylabel: str | None = None,
+        label: str | None = None,
+        figure_title: str | None = None,
+        save_path: str | None = None,
+        dpi: int = 300,
+    ) -> tuple[Figure, Axes]:
+        _ = source_files
+        _ = figure_title
+        if source_file is None:
+            raise ValueError("source_file is required for line charts.")
+        return self.draw_line(
+            config=config,
+            layout_mode=layout_mode,
+            source_file=source_file,
+            policy=policy,
+            title=title,
+            xlabel=xlabel,
+            ylabel=ylabel,
+            label=label,
+            save_path=save_path,
+            dpi=dpi,
+        )
 
     def _apply_style(self, config: PlotConfig, layout_mode: LayoutMode, policy: FontSizePolicy | None) -> None:
         palette = get_color_palette(config.color_palette_name)

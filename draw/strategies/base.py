@@ -10,26 +10,7 @@ from matplotlib.figure import Figure
 
 
 class DrawStrategy(ABC):
-    """Abstract strategy for drawing a specific chart type."""
-
-    @abstractmethod
-    def draw(
-        self,
-        *,
-        config: PlotConfig,
-        layout_mode: LayoutMode,
-        policy: FontSizePolicy | None = None,
-        source_file: str | None = None,
-        source_files: Sequence[str] | None = None,
-        title: str | None = None,
-        xlabel: str | None = None,
-        ylabel: str | None = None,
-        label: str | None = None,
-        figure_title: str | None = None,
-        save_path: str | None = None,
-        dpi: int = 300,
-    ) -> tuple[Figure, Axes] | tuple[Figure, list[Axes]]:
-        """Draw a chart with the given inputs."""
+    """Shared helper methods for drawing strategies."""
 
     @staticmethod
     def validate_source_file(source_file: str) -> Path:
@@ -72,3 +53,44 @@ class DrawStrategy(ABC):
 
         candidate.parent.mkdir(parents=True, exist_ok=True)
         return candidate
+
+
+class LineDrawStrategy(DrawStrategy):
+    """Explicit interface for single-line chart strategies."""
+
+    @abstractmethod
+    def draw_line(
+        self,
+        *,
+        config: PlotConfig,
+        layout_mode: LayoutMode,
+        source_file: str,
+        policy: FontSizePolicy | None = None,
+        title: str | None = None,
+        xlabel: str | None = None,
+        ylabel: str | None = None,
+        label: str | None = None,
+        save_path: str | None = None,
+        dpi: int = 300,
+    ) -> tuple[Figure, Axes]:
+        """Draw a single line chart from one source file."""
+
+
+class GridDrawStrategy(DrawStrategy):
+    """Explicit interface for multi-panel grid chart strategies."""
+
+    @abstractmethod
+    def draw_grid(
+        self,
+        *,
+        config: PlotConfig,
+        layout_mode: LayoutMode,
+        source_files: Sequence[str],
+        policy: FontSizePolicy | None = None,
+        xlabel: str | None = None,
+        ylabel: str | None = None,
+        figure_title: str | None = None,
+        save_path: str | None = None,
+        dpi: int = 300,
+    ) -> tuple[Figure, list[Axes]]:
+        """Draw a one-row grid chart from multiple source files."""

@@ -12,34 +12,28 @@ from matplotlib.figure import Figure
 
 from config import FontSizePolicy, LayoutMode, PlotConfig, get_color_palette, get_plot_font_size_pt
 
-from .base import DrawStrategy
+from .base import GridDrawStrategy
 
 _MM_PER_INCH = 25.4
 
 
-class GridChartStrategy(DrawStrategy):
+class GridChartStrategy(GridDrawStrategy):
     """Strategy for drawing a one-row grid chart from CSV files."""
 
-    def draw(
+    def draw_grid(
         self,
         *,
         config: PlotConfig,
         layout_mode: LayoutMode,
+        source_files: Sequence[str],
         policy: FontSizePolicy | None = None,
-        source_file: str | None = None,
-        source_files: Sequence[str] | None = None,
-        title: str | None = None,
         xlabel: str | None = None,
         ylabel: str | None = None,
-        label: str | None = None,
         figure_title: str | None = None,
         save_path: str | None = None,
         dpi: int = 300,
     ) -> tuple[Figure, list[Axes]]:
-        _ = source_file
-        _ = title
-        _ = label
-        if source_files is None or len(source_files) == 0:
+        if len(source_files) == 0:
             raise ValueError("source_files is required for grid charts.")
 
         max_subplots = self._layout_columns(layout_mode)
@@ -73,6 +67,40 @@ class GridChartStrategy(DrawStrategy):
         )
         fig.savefig(output_path, dpi=dpi, bbox_inches="tight")
         return fig, axes
+
+    # Backward-compatible entrypoint for older internal calls.
+    def draw(
+        self,
+        *,
+        config: PlotConfig,
+        layout_mode: LayoutMode,
+        policy: FontSizePolicy | None = None,
+        source_file: str | None = None,
+        source_files: Sequence[str] | None = None,
+        title: str | None = None,
+        xlabel: str | None = None,
+        ylabel: str | None = None,
+        label: str | None = None,
+        figure_title: str | None = None,
+        save_path: str | None = None,
+        dpi: int = 300,
+    ) -> tuple[Figure, list[Axes]]:
+        _ = source_file
+        _ = title
+        _ = label
+        if source_files is None:
+            raise ValueError("source_files is required for grid charts.")
+        return self.draw_grid(
+            config=config,
+            layout_mode=layout_mode,
+            source_files=source_files,
+            policy=policy,
+            xlabel=xlabel,
+            ylabel=ylabel,
+            figure_title=figure_title,
+            save_path=save_path,
+            dpi=dpi,
+        )
 
     def _apply_style(self, config: PlotConfig, layout_mode: LayoutMode, policy: FontSizePolicy | None) -> None:
         palette = get_color_palette(config.color_palette_name)
