@@ -13,6 +13,7 @@ from matplotlib.figure import Figure
 from config import FontSizePolicy, LayoutMode, PlotConfig, get_color_palette, get_plot_font_size_pt
 
 from .base import GridDrawStrategy
+from ..font_utils import configure_matplotlib_for_chinese
 
 _MM_PER_INCH = 25.4
 
@@ -110,9 +111,13 @@ class GridChartStrategy(GridDrawStrategy):
             policy=policy,
             rounded=True,
         )
+        
+        # 自动配置中文字体支持
+        actual_font = configure_matplotlib_for_chinese(config.font_family)
+        
         plt.rcParams.update(
             {
-                "font.family": config.font_family,
+                "font.family": actual_font,
                 "font.size": font_size,
                 "axes.titlesize": font_size,
                 "axes.labelsize": font_size,

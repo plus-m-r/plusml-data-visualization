@@ -2,24 +2,17 @@
 
 **⚠️ 开发测试阶段：当前版本仅用于内部验证，暂不可用于生产或正式科研流程。**
 
-## 项目状态
-
-⚠️ 当前项目处于开发测试阶段，功能与接口可能随时变动，暂不建议用于生产或正式科研流程。
-
-## Project Status
-
-**⚠️ Development and testing stage: This project is for internal validation only and must not be used in production or formal research workflows.**
-
 ## 项目简介
 
 本小型 Python 代码库的目的在于构建一个画图框架，通过硬性规定字体及其大小与图片大小，以及图片生成方式，保证能够高质量的稳定产出优质图片，且从侧面辅助养成良好的科研习惯。
 
-## 核心特性
+### ✨ 核心特性
 
 - 📐 **标准化输出**：统一规定字体、字号和图片尺寸，确保输出一致性
 - 🎨 **高质量绘图**：稳定的图片生成方式，保证科研级图像质量
 - 🔬 **科研友好**：辅助培养规范的科研绘图习惯
 - 🚀 **简单易用**：轻量级框架，快速上手
+- 🌏 **自动中文支持**：开箱即用的中文字体检测和切换（优先宋体/黑体）
 
 ## Config 使用
 
@@ -164,6 +157,44 @@ class ConservativeStrategy:
 - 所有图像默认保存到同一个输出文件夹（当前默认是 `figures/`）
 - 即使手动传入 `save_path`，也必须落在这个输出文件夹下，允许 `figures/` 内的嵌套子目录
 
+### 🌏 自动中文支持
+
+**包会自动处理中文字体，无需手动配置！**
+
+当检测到标题或标签中包含中文字符时：
+1. 自动扫描系统中可用的中文字体
+2. **优先使用宋体 (SimSun) 或黑体 (SimHei)**
+3. 如果不可用，自动降级到其他中文字体（Noto CJK、WenQuanYi 等）
+4. 发出友好警告提示用户
+5. 继续正常绘图
+
+```python
+from draw import draw_line_chart
+
+# 直接使用中文 - 自动支持！
+fig, ax = draw_line_chart(
+    source_file="data/experiment.csv",
+    title="实验结果",  # 中文标题
+    xlabel="时间 (秒)",  # 中文标签
+    ylabel="温度 (°C)",
+    save_path="figures/result.png",
+)
+```
+
+**注意**：如果宋体/黑体无法使用，可能是 matplotlib 字体缓存问题。解决方法：
+
+```python
+import matplotlib
+from pathlib import Path
+import shutil
+
+# 清除缓存
+cache_dir = Path(matplotlib.get_cachedir())
+if cache_dir.exists():
+    shutil.rmtree(cache_dir)
+    print("缓存已清除，请重新运行")
+```
+
 当前 `draw/` 目录还采用了策略模式，不同图类型由不同策略处理：
 
 - `line`：单图策略
@@ -205,3 +236,61 @@ fig, axes = draw_grid_chart(
 ## 许可证
 
 本项目采用 [MIT License](LICENSE) 开源协议。
+
+---
+
+## 📦 打包与安装
+
+### 本地安装（推荐）
+
+```bash
+# 开发模式安装（可编辑）
+pip install -e .
+```
+
+### 从分发包安装
+
+```bash
+# 使用 wheel 包（推荐）
+pip install dist/plusml_data_visualization-0.1.0-py3-none-any.whl
+
+# 或使用源码分发包
+pip install dist/plusml-data-visualization-0.1.0.tar.gz
+```
+
+### 验证安装
+
+```python
+python -c "from config import FONT_FAMILY; print('Config:', FONT_FAMILY)"
+python -c "from draw import draw_line_chart; print('Draw module OK')"
+```
+
+预期输出：
+```
+Config: Times New Roman
+Draw module OK
+```
+
+### 重新打包
+
+```bash
+# 清理旧文件
+rm -rf build/ dist/ *.egg-info
+
+# 重新打包
+python setup.py sdist bdist_wheel
+
+# 或使用构建脚本
+./build.sh
+```
+
+生成的文件位于 `dist/` 目录：
+- `plusml-data-visualization-0.1.0.tar.gz` (源码分发包)
+- `plusml_data_visualization-0.1.0-py3-none-any.whl` (Wheel 包)
+
+### 依赖要求
+
+安装包时会自动安装以下依赖：
+- matplotlib
+- ogb >= 1.3.6
+- Python >= 3.7

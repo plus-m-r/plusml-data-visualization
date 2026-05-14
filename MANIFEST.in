@@ -1,0 +1,16 @@
+include Readme.md
+include LICENSE
+include requirements.txt
+include MODULE_INTERFACE_SPEC.md
+include QUICK_REFERENCE.md
+recursive-include config *.py
+recursive-include draw *.py
+graft config
+graft draw
+prune tests
+prune __pycache__
+prune *.pyc
+prune *.pyo
+prune .git
+prune .pytest_cache
+prune download_datasets.py
