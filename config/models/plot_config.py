@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Mapping
 
+from .aspect_ratio_policy import AspectRatioPolicy
 from .font_size_policy import FontSizePolicy
 from .layout_mode import LayoutMode
 
@@ -16,3 +17,4 @@ class PlotConfig:
     output_dir: str = "figures"
     color_palette_name: str = "classic_academic_blue"
     default_font_size_policy: FontSizePolicy = FontSizePolicy.FIXED_SOURCE_WIDTH
+    default_aspect_ratio_policy: AspectRatioPolicy = AspectRatioPolicy.FOUR_TO_THREE

@@ -1,11 +1,17 @@
+"""Fixed source width font size strategy."""
+
 from __future__ import annotations
 
-from ..models.layout_mode import LayoutMode
-from ..models.plot_config import PlotConfig
+from ...models.layout_mode import LayoutMode
+from ...models.plot_config import PlotConfig
 
 
 class FixedSourceWidthStrategy:
-    """Scale font size by source width / final width."""
+    """Scale font size by source width / final width.
+    
+    This strategy maintains consistent visual appearance when figures
+    are scaled from source to final publication size.
+    """
 
     def calc_plot_font_size_pt(self, config: PlotConfig, layout_mode: LayoutMode) -> float:
         final_width_mm = config.final_subplot_width_mm_by_mode[layout_mode]
