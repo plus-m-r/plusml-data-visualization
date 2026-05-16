@@ -5,6 +5,7 @@ Usage:
     
     p = Plotter()
     p.line("data.csv", title="My Chart")
+    p.heatmap("matrix.csv", title="Heatmap")
 """
 
 from .core import Plotter
