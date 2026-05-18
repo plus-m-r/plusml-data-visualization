@@ -23,7 +23,7 @@ MARKERS = ['o', 's', '^', 'D', 'v', '<', '>', 'p', '*', 'h', 'H', '+', 'x', 'X']
 
 # Default plot styling constants
 DEFAULT_MARKER_SIZE = 6
-DEFAULT_LINE_WIDTH = 2
+DEFAULT_LINE_WIDTH = 1.5  # Nature style: thinner lines for cleaner look
 
 # Title positioning parameters
 TITLE_POSITION_Y = -0.15  # Y position relative to axes (negative = below)

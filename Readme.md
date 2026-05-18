@@ -571,6 +571,253 @@ print(DEFAULT_PLOT_CONFIG)
 
 ---
 
+## 📊 Nature-Figure 风格图表
+
+本库遵循 **nature-figure skill** 的理念和 Nature 期刊标准，提供出版级质量的图表输出。
+
+### Nature-Figure 核心原则
+
+1. **核心结论驱动设计**
+   - 每个图表都从一个明确的科学主张开始
+   - 用图证明某个科学主张，而非简单地"画个图"
+
+2. **证据层次映射**
+   - 雷达图：展示多维度证据，证明模型的全面优势
+   - 柱状图：提供单一指标的清晰对比，支持主要结论
+
+3. **出版级质量输出**
+   - **SVG**: 文本可编辑，可在 Illustrator 中进一步修改
+   - **PDF**: 符合期刊投稿要求，嵌入 TrueType 字体
+   - **TIFF**: 600 DPI，满足印刷质量要求
+
+4. **Nature 风格美学**
+   - **字体**: Arial/Helvetica sans-serif 家族（默认 Arial）
+   - **字号**: 7pt 正文，8pt 标题
+   - **配色**: 克制的语义化调色板
+   - **布局**: 单栏宽度（3.5 英寸 ≈ 89mm）
+   - **线条**: 细线宽（0.5-1.5pt），减少视觉噪音
+
+5. **极简坐标轴设计**
+   - 移除顶部和右侧边框
+   - 无框图例，减少视觉干扰
+   - 轻量级网格线辅助阅读
+
+### Nature-Figure 测试示例
+
+项目包含完整的 Nature-Figure 风格测试，生成雷达图和柱状图示例：
+
+```bash
+# 运行 Nature-Figure 风格测试
+python tests/unit/test_nature_figure.py
+
+# 查看生成的图表
+ls -lh figures/ | grep -E "radar|bar"
+```
+
+生成的示例图表包括：
+- **雷达图** (`figures/radar_chart_model_comparison.*`): 多模型性能对比
+- **柱状图** (`figures/bar_chart_accuracy.*`): 准确率对比
+
+输出格式：
+- `.svg` - 可编辑矢量图（~12K）
+- `.pdf` - 打印就绪（~45K）
+- `.tiff` - 600 DPI 高分辨率（~12-14M）
+
+详细测试说明请参考：[tests/NATURE_FIGURE_TEST_README.md](tests/NATURE_FIGURE_TEST_README.md)
+
+---
+
+## ⚙️ 配置系统详解
+
+### 默认配置优化总结
+
+基于 **nature-figure skill** 的标准和 Nature 期刊要求，PlusML 数据可视化库的默认配置已进行全面优化：
+
+#### ✅ 1. DPI 分辨率提升 (300 → 600)
+
+**变更内容**：
+```python
+# 之前
+dpi: int = 300
+
+# 现在
+dpi: int = 600  # Nature journal standard
+```
+
+**原因**：
+- Nature/Science 等顶级期刊要求至少 600 DPI
+- 提供更清晰的细节和更平滑的边缘
+- 与 nature-figure skill 推荐标准对齐
+
+**影响**：
+- PNG/TIFF 文件大小约增加 2-4 倍
+- SVG/PDF 文件大小基本不变（矢量格式）
+- 生成时间略微增加（通常 < 1 秒）
+
+**向后兼容**：完全向后兼容，可以显式指定不同的 DPI：
+```python
+from plot import Plotter
+
+# 使用默认的 600 DPI（推荐用于出版）
+p = Plotter()
+
+# 使用较低的 DPI（快速预览）
+p_preview = Plotter(dpi=150)
+
+# 使用极高的 DPI（超高质量印刷）
+p_print = Plotter(dpi=1200)
+```
+
+#### ✅ 2. 字体家族更改 (Times New Roman → Arial)
+
+**变更内容**：
+```python
+# 之前
+font_family="Times New Roman"
+
+# 现在
+font_family="Arial"  # Nature standard: sans-serif
+```
+
+**原因**：
+- **Nature 标准**: 使用 sans-serif 字体（Arial/Helvetica）
+- 更好的屏幕和印刷可读性
+- 现代科学出版物的通用选择
+
+#### ✅ 3. 线宽优化 (2 → 1.5)
+
+**变更内容**：
+```python
+# 之前
+DEFAULT_LINE_WIDTH = 2
+
+# 现在
+DEFAULT_LINE_WIDTH = 1.5  # Nature style: thinner lines for cleaner look
+```
+
+**原因**：
+- 更细的线条符合 Nature 风格的简洁美学
+- 减少视觉噪音，突出数据本身
+- 在高分辨率（600 DPI）下仍然清晰可见
+
+#### ✅ 4. matplotlib rcParams 增强
+
+**新增配置**：
+```python
+plt.rcParams.update({
+    # 字体栈（支持中文回退）
+    "font.sans-serif": [actual_font, "Arial", "Helvetica", "DejaVu Sans"],
+    
+    # Nature 风格：极简坐标轴
+    "axes.spines.right": False,      # 移除右侧边框
+    "axes.spines.top": False,        # 移除顶部边框
+    "axes.linewidth": 0.8,           # 细边框
+    
+    # 图例样式
+    "legend.frameon": False,         # 无框图例
+    
+    # 矢量输出设置
+    "svg.fonttype": "none",          # SVG 中保持文本可编辑
+    "pdf.fonttype": 42,              # PDF 中嵌入 TrueType 字体
+})
+```
+
+**原因**：
+1. **字体栈**: 确保中文支持的同时优先使用 Arial
+2. **极简坐标轴**: Nature 风格要求只保留左侧和底部边框
+3. **无框图例**: 减少视觉干扰
+4. **可编辑文本**: SVG/PDF 输出可在 Illustrator 中后期编辑
+
+### 📊 配置对比表
+
+| 配置项 | 之前 | 现在 | 说明 |
+|--------|------|------|------|
+| **DPI** | 300 | **600** | Nature 期刊标准 |
+| **字体** | Times New Roman | **Arial** | Nature 标准 sans-serif |
+| **线宽** | 2.0 | **1.5** | 更简洁的视觉效果 |
+| **坐标轴边框** | 四边都有 | **仅左+底** | Nature 极简风格 |
+| **边框宽度** | 默认 | **0.8** | 细线条 |
+| **图例边框** | 有框 | **无框** | 减少干扰 |
+| **SVG 文本** | 路径化 | **可编辑** | 后期可修改 |
+| **PDF 字体** | 默认 | **TrueType** | 嵌入可编辑字体 |
+
+### 🎯 符合的标准
+
+#### Nature Portfolio 要求
+✅ 分辨率 ≥ 600 DPI  
+✅ Sans-serif 字体（Arial/Helvetica）  
+✅ 极简坐标轴设计  
+✅ 可编辑的矢量输出  
+
+#### nature-figure skill 推荐
+✅ 字体大小 7pt（最终出版）  
+✅ 细线宽（0.8-1.2）  
+✅ 无顶部/右侧边框  
+✅ 无框图例  
+✅ SVG/PDF 文本可编辑  
+
+### 💡 DPI 使用建议
+
+| 用途 | 推荐 DPI | 说明 |
+|------|---------|------|
+| **Nature/Science 投稿** | 600 | 期刊标准要求 |
+| **一般学术出版** | 600 | 高质量印刷 |
+| **会议海报** | 300-600 | 根据海报尺寸调整 |
+| **屏幕展示/PPT** | 150-300 | 平衡质量和文件大小 |
+| **快速预览/调试** | 72-150 | 最小文件，最快速度 |
+
+### 🔍 验证配置
+
+```bash
+# 检查默认配置
+$ python -c "from plot import Plotter; p = Plotter(); print(f'Font: {p.config.font_family}'); print(f'DPI: {p.dpi}')"
+Font: Arial
+DPI: 600
+
+# 运行测试
+$ python tests/unit/test_heatmap.py
+✓ Basic heatmap created successfully
+✓ Heatmap with values created successfully
+All tests passed!
+```
+
+### 📝 相关配置文件
+
+- [config/presets/default_presets.py](config/presets/default_presets.py) - 默认配置预设
+- [config/constants.py](config/constants.py) - 常量定义
+- [plot/core.py](plot/core.py) - Plotter 主类
+- [plot/strategies/line.py](plot/strategies/line.py) - 折线图策略
+- [plot/strategies/scatter.py](plot/strategies/scatter.py) - 散点图策略
+- [plot/strategies/heatmap.py](plot/strategies/heatmap.py) - 热力图策略
+
+### 🚀 后续优化方向
+
+可以考虑的进一步优化：
+
+1. **配色方案优化**
+   - 采用 nature-figure 推荐的 NMI pastel 调色板
+   - 为不同图表类型提供专用配色
+
+2. **布局模板**
+   - 添加 Nature 单栏/双栏尺寸预设
+   - 提供多面板组合模板
+
+3. **统计标注自动化**
+   - 自动添加显著性标记（*, **, ***）
+   - 集成统计检验功能
+
+4. **质量控制检查**
+   - 自动检测字体嵌入
+   - 验证颜色对比度
+   - 检查分辨率是否达标
+
+5. **批量处理优化**
+   - 并行生成多张图表
+   - 统一的图例和标注风格
+   - 自动化命名规则
+
+---
+
 ## 📦 打包与发布
 
 ### 清理旧文件

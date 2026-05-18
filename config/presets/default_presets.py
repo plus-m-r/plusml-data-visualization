@@ -18,3 +18,4 @@ DEFAULT_PLOT_CONFIG = PlotConfig(
         LayoutMode.THREE_PER_ROW: 60.0,
     },
 )
+ 

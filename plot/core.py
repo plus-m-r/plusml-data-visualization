@@ -17,7 +17,7 @@ class Plotter:
         *,
         config: PlotConfig = DEFAULT_PLOT_CONFIG,
         policy: FontSizePolicy | None = None,
-        dpi: int = 300,
+        dpi: int = 600,
     ) -> None:
         self.config = config
         self.policy = policy

@@ -39,7 +39,7 @@ class HeatmapDrawStrategy(DrawStrategy):
         xlabel: str | None = None,
         ylabel: str | None = None,
         save_path: str | None = None,
-        dpi: int = 300,
+        dpi: int = 600,
         cmap: str = "viridis",
         show_values: bool = False,
         value_format: str = ".2f",
@@ -135,6 +135,7 @@ class HeatmapDrawStrategy(DrawStrategy):
         plt.rcParams.update(
             {
                 "font.family": actual_font,
+                "font.sans-serif": [actual_font, "Arial", "Helvetica", "DejaVu Sans"],
                 "font.size": font_size,
                 "axes.titlesize": font_size,
                 "axes.labelsize": font_size,
@@ -142,6 +143,13 @@ class HeatmapDrawStrategy(DrawStrategy):
                 "ytick.labelsize": font_size,
                 "legend.fontsize": font_size,
                 "axes.unicode_minus": False,  # 解决负号显示问题
+                # Nature style: minimalist axes
+                "axes.spines.right": False,
+                "axes.spines.top": False,
+                "axes.linewidth": 0.8,
+                "legend.frameon": False,
+                "svg.fonttype": "none",  # Editable text in SVG
+                "pdf.fonttype": 42,      # Embed TrueType in PDF
             }
         )
 
