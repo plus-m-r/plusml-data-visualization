@@ -18,10 +18,15 @@ from .constants import (
     TITLE_VERTICAL_ALIGNMENT,
     TITLE_HORIZONTAL_ALIGNMENT,
     TITLE_FONT_SIZE,
+    # Phase 1: Nature-Figure font hierarchy
+    FONT_SIZE_HIERARCHY,
+    AXES_LINEWIDTH_BY_CONTEXT,
+    DEFAULT_FONT_SIZE_CONTEXT,
 )
 
 # Import color palettes
 from .colors import (
+    ABLATION_SINGLE,
     BLUE_ORANGE_SAFE,
     BLUE_PURPLE_SAFE,
     BLUE_YELLOW_SAFE,
@@ -31,6 +36,8 @@ from .colors import (
     DISTINCT_QUALITATIVE,
     MACARON,
     NATURAL_FRIENDLY,
+    NMI_PASTEL,
+    SEMANTIC_NATURE,
     TRI_COLOR,
     TWO_COLOR,
     get_color_palette,
@@ -107,6 +114,10 @@ __all__ = [
     "BLUE_PURPLE_SAFE",
     "TWO_COLOR",
     "TRI_COLOR",
+    # Phase 1: Nature-Figure semantic palettes
+    "SEMANTIC_NATURE",
+    "NMI_PASTEL",
+    "ABLATION_SINGLE",
     
     # Services (high-level API)
     "normalize_layout_mode",
@@ -138,4 +149,8 @@ __all__ = [
     "TITLE_VERTICAL_ALIGNMENT",
     "TITLE_HORIZONTAL_ALIGNMENT",
     "TITLE_FONT_SIZE",
+    # Phase 1: Nature-Figure font hierarchy
+    "FONT_SIZE_HIERARCHY",
+    "AXES_LINEWIDTH_BY_CONTEXT",
+    "DEFAULT_FONT_SIZE_CONTEXT",
 ]

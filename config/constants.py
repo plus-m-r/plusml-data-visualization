@@ -30,3 +30,51 @@ TITLE_POSITION_Y = -0.15  # Y position relative to axes (negative = below)
 TITLE_VERTICAL_ALIGNMENT = 'top'
 TITLE_HORIZONTAL_ALIGNMENT = 'center'
 TITLE_FONT_SIZE = 'large'
+
+# ============================================================================
+# Nature-Figure Font Size Hierarchy (Phase 1 Optimization)
+# Based on nature-figure skill typography standards
+# ============================================================================
+
+# Font size hierarchy for different contexts (in points)
+FONT_SIZE_HIERARCHY = {
+    # Journal-final dense multi-panel figure at publication width (7-9pt base)
+    "journal_final": {
+        "base": 7,              # Base text
+        "axis_label": 9,        # Axis labels
+        "tick_label": 8,        # Tick labels
+        "title": 10,            # Plot title
+        "legend": 8,            # Legend text
+        "annotation": 9,        # Annotations
+    },
+    
+    # Large comparison bar panels (figsize > 28in wide)
+    "large_panel": {
+        "base": 24,
+        "axis_label": 32,
+        "tick_label": 20,
+        "title": 36,
+        "legend": 28,
+        "annotation": 32,
+    },
+    
+    # Compact subfigures / analytic plots
+    "compact_panel": {
+        "base": 15,
+        "axis_label": 16,
+        "tick_label": 14,
+        "title": 18,
+        "legend": 14,
+        "annotation": 16,
+    },
+}
+
+# Axes linewidth by context
+AXES_LINEWIDTH_BY_CONTEXT = {
+    "journal_final": 0.8,   # Journal final figures
+    "large_panel": 3,       # Large panels
+    "compact_panel": 2,     # Compact plots
+}
+
+# Default font size context
+DEFAULT_FONT_SIZE_CONTEXT = "journal_final"

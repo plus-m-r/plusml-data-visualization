@@ -18,3 +18,5 @@ class PlotConfig:
     color_palette_name: str = "classic_academic_blue"
     default_font_size_policy: FontSizePolicy = FontSizePolicy.FIXED_SOURCE_WIDTH
     default_aspect_ratio_policy: AspectRatioPolicy = AspectRatioPolicy.FOUR_TO_THREE
+    # Phase 1: Font size context for Nature-Figure typography hierarchy
+    font_size_context: str = "journal_final"  # "journal_final" | "large_panel" | "compact_panel"

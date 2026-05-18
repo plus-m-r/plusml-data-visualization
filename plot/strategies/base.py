@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Sequence
 
 from config import FontSizePolicy, LayoutMode, PlotConfig, CHINESE_FONTS, TITLE_POSITION_Y, TITLE_VERTICAL_ALIGNMENT, TITLE_HORIZONTAL_ALIGNMENT, TITLE_FONT_SIZE
+from config.constants import FONT_SIZE_HIERARCHY, AXES_LINEWIDTH_BY_CONTEXT, DEFAULT_FONT_SIZE_CONTEXT
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
@@ -47,6 +48,50 @@ def set_title_below(ax, title: str) -> None:
     ax.text(0.5, TITLE_POSITION_Y, title, transform=ax.transAxes,
             fontsize=TITLE_FONT_SIZE, verticalalignment=TITLE_VERTICAL_ALIGNMENT,
             horizontalalignment=TITLE_HORIZONTAL_ALIGNMENT)
+
+
+def apply_font_hierarchy(ax: Axes, context: str = None) -> None:
+    """Apply Nature-Figure font size hierarchy to axes elements.
+    
+    Based on nature-figure skill typography standards. Sets appropriate font sizes
+    for axis labels, tick labels, title, legend, and annotations based on context.
+    
+    Args:
+        ax: The matplotlib axes object.
+        context: Font size context ("journal_final", "large_panel", or "compact_panel").
+                If None, uses DEFAULT_FONT_SIZE_CONTEXT.
+    """
+    if context is None:
+        context = DEFAULT_FONT_SIZE_CONTEXT
+    
+    # Get font sizes for this context
+    sizes = FONT_SIZE_HIERARCHY.get(context, FONT_SIZE_HIERARCHY[DEFAULT_FONT_SIZE_CONTEXT])
+    
+    # Apply to axis labels
+    xlabel = ax.get_xlabel()
+    ylabel = ax.get_ylabel()
+    if xlabel:
+        ax.xaxis.label.set_size(sizes["axis_label"])
+    if ylabel:
+        ax.yaxis.label.set_size(sizes["axis_label"])
+    
+    # Apply to tick labels
+    ax.tick_params(axis='both', which='major', labelsize=sizes["tick_label"])
+    
+    # Apply to title
+    title = ax.get_title()
+    if title:
+        # Find the title text object and update its size
+        for text in ax.texts:
+            if text.get_text() == title:
+                text.set_fontsize(sizes["title"])
+                break
+    
+    # Apply to legend
+    legend = ax.get_legend()
+    if legend:
+        for text in legend.get_texts():
+            text.set_fontsize(sizes["legend"])
 
 
 def resolve_fallback_name(title: str | None, paths: list[Path], default: str = "plot") -> str:

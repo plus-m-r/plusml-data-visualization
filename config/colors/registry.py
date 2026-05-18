@@ -4,6 +4,7 @@ from typing import Mapping
 
 from ..models import ColorPalette
 from .presets import (
+    ABLATION_SINGLE,
     BLUE_ORANGE_SAFE,
     BLUE_PURPLE_SAFE,
     BLUE_YELLOW_SAFE,
@@ -11,6 +12,8 @@ from .presets import (
     DISTINCT_QUALITATIVE,
     MACARON,
     NATURAL_FRIENDLY,
+    NMI_PASTEL,
+    SEMANTIC_NATURE,
     TRI_COLOR,
     TWO_COLOR,
 )
@@ -29,6 +32,10 @@ COLOR_PALETTES: Mapping[str, ColorPalette] = {
         BLUE_PURPLE_SAFE,
         TWO_COLOR,
         TRI_COLOR,
+        # Nature-Figure semantic palettes (Phase 1)
+        SEMANTIC_NATURE,
+        NMI_PASTEL,
+        ABLATION_SINGLE,
     )
 }
 

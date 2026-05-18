@@ -121,6 +121,11 @@ class ScatterChartStrategy(DrawStrategy):
         # Auto-configure Chinese font support
         actual_font = auto_detect_chinese_font(config.font_family)
         
+        # Phase 1: Get axes linewidth based on font size context
+        from config.constants import AXES_LINEWIDTH_BY_CONTEXT, DEFAULT_FONT_SIZE_CONTEXT
+        context = getattr(config, 'font_size_context', DEFAULT_FONT_SIZE_CONTEXT)
+        axes_linewidth = AXES_LINEWIDTH_BY_CONTEXT.get(context, 0.8)
+        
         plt.rcParams.update(
             {
                 "font.family": actual_font,
@@ -135,7 +140,7 @@ class ScatterChartStrategy(DrawStrategy):
                 # Nature style: minimalist axes
                 "axes.spines.right": False,
                 "axes.spines.top": False,
-                "axes.linewidth": 0.8,
+                "axes.linewidth": axes_linewidth,  # Phase 1: Context-based linewidth
                 "legend.frameon": False,
                 "svg.fonttype": "none",  # Editable text in SVG
                 "pdf.fonttype": 42,      # Embed TrueType in PDF

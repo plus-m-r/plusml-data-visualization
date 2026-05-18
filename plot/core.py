@@ -6,7 +6,7 @@ from typing import Sequence
 
 from config import DEFAULT_PLOT_CONFIG, FontSizePolicy, PlotConfig, normalize_layout_mode
 
-from .strategies import LINE_STRATEGY, SCATTER_STRATEGY, HEATMAP_STRATEGY
+from .strategies import LINE_STRATEGY, SCATTER_STRATEGY, HEATMAP_STRATEGY, BAR_STRATEGY
 
 
 class Plotter:
@@ -212,5 +212,82 @@ class Plotter:
             cmap=cmap,
             show_values=show_values,
             value_format=value_format,
+        )
+        return fig, ax
+
+    def bar(
+        self,
+        data_specs: Sequence[tuple[str, str | None, str | None, str | None]],
+        *,
+        title: str | None = None,
+        layout: str = "1x1",
+        save_path: str | None = None,
+        annotate_values: bool = True,
+        show_edge_color: bool = True,
+    ) -> tuple[Figure, Axes]:
+        """Draw a bar chart with one or more data series.
+        
+        Phase 1 Features:
+        - Bar edge colors for better visual separation
+        - Value annotations inside/outside bars
+        - Semantic color palette support
+        
+        Args:
+            data_specs: List of tuples (source_file, xlabel, ylabel, label)
+                - source_file: Path to CSV data file (required)
+                  Expected format: category,value
+                - xlabel: X-axis label (optional, use first non-None value)
+                - ylabel: Y-axis label (optional, use first non-None value)
+                - label: Legend label for this series (optional)
+            title: Chart title
+            layout: Layout mode ("1x1", "2x1", "3x1")
+            save_path: Output file path
+            annotate_values: Whether to show values on bars (default: True)
+            show_edge_color: Whether to show white edge colors on bars (default: True)
+            
+        Returns:
+            Tuple of (Figure, Axes)
+            
+        Examples:
+            # Single bar chart
+            p.bar([
+                ("data.csv", "Category", "Value", "Series 1")
+            ], title="Single Bar")
+            
+            # Multiple grouped bars
+            p.bar([
+                ("data1.csv", "Category", "Value", "Series 1"),
+                ("data2.csv", "Category", "Value", "Series 2"),
+            ], title="Grouped Bars")
+        """
+        from config import LayoutMode
+        mode = normalize_layout_mode(layout)
+        
+        if not data_specs:
+            raise ValueError("data_specs cannot be empty")
+        
+        # Extract source files and labels
+        source_files = [spec[0] for spec in data_specs]
+        labels = [spec[3] if len(spec) > 3 else None for spec in data_specs]
+        
+        # Use first data source's labels as default
+        first_spec = data_specs[0]
+        xlabel = first_spec[1] if len(first_spec) > 1 else None
+        ylabel = first_spec[2] if len(first_spec) > 2 else None
+        
+        fig, ax = BAR_STRATEGY.draw_bar(
+            config=self.config,
+            layout_mode=mode,
+            source_files=source_files,
+            labels=labels,
+            policy=self.policy,
+            aspect_ratio_policy=None,
+            title=title,
+            xlabel=xlabel,
+            ylabel=ylabel,
+            save_path=save_path,
+            dpi=self.dpi,
+            annotate_values=annotate_values,
+            show_edge_color=show_edge_color,
         )
         return fig, ax
